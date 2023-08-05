@@ -18,5 +18,5 @@ pip install -r requirements.txt
 ```
 3. Run bot.py
 ```bash
-python bot.py
+python bot.py --channel <log_channel_id> --guild <discord_guild_id>
 ```
