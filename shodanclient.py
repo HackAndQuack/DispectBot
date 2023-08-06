@@ -2,6 +2,8 @@ from dotenv import load_dotenv , find_dotenv
 import os
 from shodan import Shodan
 import ipaddress
+import requests
+import json
 
 shodan_client = Shodan(os.getenv('SHODAN_API'))
 
@@ -51,16 +53,22 @@ def get_api_info() -> str:
     api_parse = parse_and_sort_api_info(api_data)
     return api_parse
 
+#formats the response file from the api_info scan
 def parse_and_sort_api_info(api_data:dict) -> str:
     api_response = ('Info: \n ---------'
-                    +'\nScan Credits: ' + (str(api_data['scan_credits']),)
-                    + '\nPlan: ' (str(api_data['plan']),)
-                    + '\nHTTPs: ' (str(api_data['https']),)
-                    + '\nUnlocked: ' (str(api_data['unlocked']),)
-                    + '\nQuery Credits: ' (str(api_data['query_credits']),)
-                    + '\nMonitored IPs: ' (str(api_data['monitored_ips']),)
-                    + '\nUnlocked Left: ' (str(api_data['unlocked_left']),)
-                    + '\nTelnet: ' (str(api_data['telnet']))
+                    + '\nScan Credits: ' + (str(api_data['scan_credits']))
+                    + '\nPlan: ' + (str(api_data['plan']))
+                    + '\nHTTPs: ' + (str(api_data['https']))
+                    + '\nUnlocked: ' + (str(api_data['unlocked']))
+                    + '\nQuery Credits: ' + (str(api_data['query_credits']))
+                    + '\nMonitored IPs: ' + (str(api_data['monitored_ips']))
+                    + '\nUnlocked Left: ' + (str(api_data['unlocked_left']))
+                    + '\nTelnet: ' + (str(api_data['telnet']))
                     )
     return api_response
     
+#Scans Reverse DNS info
+def reverse_dns_info(ip_list:list()) -> str:
+    ip = ''
+    for x in ip_list:
+        ip += (x + ',')
