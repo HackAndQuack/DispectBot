@@ -1,14 +1,11 @@
 import discord 
 from discord import app_commands
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 import pyfiglet
 import os
-import vt 
-import json
-import nest_asyncio
 import argparse
-import emailrep 
-from emailrep import EmailRep
+from vtclient import *
+from emailrepclient import *
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
@@ -16,14 +13,12 @@ parser.add_argument('--channel', type=int, help='Channel ID for the bot to send 
 parser.add_argument('--guild', type=int, help='Guild ID of the bot to use', required=True)
 args = parser.parse_args()
 
-nest_asyncio.apply()
 load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-vt_client = vt.Client(os.getenv('VIRUS_TOTAL_API'))
 
 
 # Slash command /getnews
@@ -31,28 +26,18 @@ vt_client = vt.Client(os.getenv('VIRUS_TOTAL_API'))
 async def getnews(interaction):
     await interaction.response.send_message('getting news!')
 
+
+# Slash command /get_email
 @tree.command(name='email_scan', description='Scans Email')
-async def get_email(ctx,email=''):
-    emailrep = EmailRep((os.getenv('EMAIL_REP_API')))
+async def get_email(ctx, email:str):
+    email_response = scan_email(email)
+    embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
 
-    data = emailrep.query(email)
-
-    email_reponse = ('Email ' + data['email']
-             + '\nReputation: ' + str(data['reputation'])
-             + '\nSuspicious: ' + str(data['suspicious'])
-             + '\nReferences: ' + str(data['references'])
-             + '\nDetails: ')
-
-    for x in data['details']:
-        email_reponse += '\n'+ x + ': '
-        email_reponse += (str(data['details'][x]))
-
-    embed = discord.Embed(title='Email Response', description=email_reponse, color=0x00FFF)
-
+# Slash command /report_email
 #@tree.command(name='email_report', description='Report Email')
 #async def report_email(ctx,email=''):
-    #emailrep --report email --tags "bec, maldoc" --description "Contact impersonation to CEO"
-    
+#   report_email(email)
+
 
 @client.event
 async def on_ready():
@@ -65,6 +50,7 @@ async def on_ready():
     log_channel = guild.get_channel(args.channel)
 
     print(pyfiglet.figlet_format('Dispect'))
+
 
 @client.event
 async def on_message(message):
@@ -79,69 +65,14 @@ async def on_message(message):
             if word.startswith('http'):
                 print(f'Detected URL: {word}')
                 # VirusTotal scan the URL, save results to scan_result
-                analysis = vt_client.scan_url(word)
-                while True:
-                    analysis = vt_client.get_object("/analyses/{}", analysis.id)
-                    print(f'Analysis status: {analysis.status}')
-                    if analysis.status == "completed":
-                        scan_result = str(analysis.get('results'))
-                        break
-                # Change every apostraphe to a quotation mark to convert the results to JSON 
-                scan_result = scan_result.replace('\'', '"')
-                # Parse JSON file to filter information
-                scan_parsed = json.loads(scan_result)
-                scan_list = list()
-                for key in scan_parsed:
-                    #print(f'{scan_parsed[key]["engine_name"]} result: {scan_parsed[key]["result"]}')
-                    scan_list.append(f'{scan_parsed[key]["engine_name"]} result: {scan_parsed[key]["result"]}')
-
-                # Sort scan_list based on severity
-                scan_list_clean = list()
-                scan_list_unrated = list()
-                scan_list_malicious = list()
-                scan_list_malware = list()
-                for entry in scan_list:
-                    if 'clean' in entry[entry.index(':'):]:
-                        scan_list_clean.append(entry)
-                    if 'unrated' in entry[entry.index(':'):]:
-                        scan_list_unrated.append(entry)
-                    if 'malicious' in entry[entry.index(':'):]:
-                        scan_list_malicious.append(entry)
-                    if 'malware' in entry[entry.index(':'):]:
-                        scan_list_malware.append(entry)
-                scan_list = list()
-                for entry in scan_list_malware:
-                    scan_list.append(entry)
-                for entry in scan_list_malicious:
-                    scan_list.append(entry)
-                for entry in scan_list_unrated:
-                    scan_list.append(entry)
-                for entry in scan_list_clean:
-                    scan_list.append(entry)
-
-                # Format scan_list to string
-                scan_str = ('Clean: ' + str(len(scan_list_clean)) + '(' + str(round((len(scan_list_clean)/len(scan_list))*100)) +'%)'
-                            + '\nUnrated: ' + str(len(scan_list_unrated)) + '(' + str(round((len(scan_list_unrated)/len(scan_list))*100)) +'%)'
-                            + '\nMalicious: ' + str(len(scan_list_malicious)) + '(' + str(round((len(scan_list_malicious)/len(scan_list))*100)) +'%)'
-                            + '\nMalware: ' + str(len(scan_list_malware)) + '(' + str(round((len(scan_list_malware)/len(scan_list))*100)) +'%)'
-                            + '\n' + ('-'*20) + '\n')
-                
-                for entry in scan_list:
-                    if 'clean' in entry[entry.index(':'):]:
-                        scan_str += ':white_check_mark: '
-                    if 'unrated' in entry[entry.index(':'):]:
-                        scan_str += ':grey_question: '
-                    if 'malicious' in entry[entry.index(':'):]:
-                        scan_str += ':interrobang: '
-                    if 'malware' in entry[entry.index(':'):]:
-                        scan_str += ':fire: '
-                    scan_str += entry + '\n'
-
+                scan_parsed = scan_for_json(word)
+                # Parse through the dictionary
+                scan_str = parse_and_sort(scan_parsed)
                 # Send embed message
                 embed = discord.Embed(title=word, description=scan_str, color=0xFFFFFF)
                 await log_channel.send(embed=embed)
 
-                if ((len(scan_list_clean)/len(scan_list))*100) < 66:
+                if get_clean_percentage(scan_parsed) < 66:
                     await message.delete()
 
 
