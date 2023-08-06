@@ -7,6 +7,8 @@ import vt
 import json
 import nest_asyncio
 import argparse
+import emailrep 
+from emailrep import EmailRep
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
@@ -29,6 +31,28 @@ vt_client = vt.Client(os.getenv('VIRUS_TOTAL_API'))
 async def getnews(interaction):
     await interaction.response.send_message('getting news!')
 
+@tree.command(name='email_scan', description='Scans Email')
+async def get_email(ctx,email=''):
+    emailrep = EmailRep((os.getenv('EMAIL_REP_API')))
+
+    data = emailrep.query(email)
+
+    email_reponse = ('Email ' + data['email']
+             + '\nReputation: ' + str(data['reputation'])
+             + '\nSuspicious: ' + str(data['suspicious'])
+             + '\nReferences: ' + str(data['references'])
+             + '\nDetails: ')
+
+    for x in data['details']:
+        email_reponse += '\n'+ x + ': '
+        email_reponse += (str(data['details'][x]))
+
+    embed = discord.Embed(title='Email Response', description=email_reponse, color=0x00FFF)
+
+#@tree.command(name='email_report', description='Report Email')
+#async def report_email(ctx,email=''):
+    #emailrep --report email --tags "bec, maldoc" --description "Contact impersonation to CEO"
+    
 
 @client.event
 async def on_ready():
