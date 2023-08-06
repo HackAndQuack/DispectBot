@@ -49,7 +49,7 @@ def get_clean_percentage(scan_parsed:dict) -> int:
     return (counter/len(scan_parsed))*100
 
 
-def parse_and_sort(scan_parsed:dict) -> str:
+def parse_and_sort(scan_parsed:dict, verbose:bool) -> str:
     """Parses through a VirusTotal JSON output, sorts based on severity, and formats a 
     string ready to be read by humans
 
@@ -92,17 +92,20 @@ def parse_and_sort(scan_parsed:dict) -> str:
     scan_str = ('Clean: ' + str(len(scan_list_clean)) + '(' + str(round((len(scan_list_clean)/len(scan_list))*100)) +'%)'
                 + '\nUnrated: ' + str(len(scan_list_unrated)) + '(' + str(round((len(scan_list_unrated)/len(scan_list))*100)) +'%)'
                 + '\nMalicious: ' + str(len(scan_list_malicious)) + '(' + str(round((len(scan_list_malicious)/len(scan_list))*100)) +'%)'
-                + '\nMalware: ' + str(len(scan_list_malware)) + '(' + str(round((len(scan_list_malware)/len(scan_list))*100)) +'%)'
-                + '\n' + ('-'*20) + '\n')
-                
-    for entry in scan_list:
-        if 'clean' in entry[entry.index(':'):]:
-            scan_str += ':white_check_mark: '
-        if 'unrated' in entry[entry.index(':'):]:
-            scan_str += ':grey_question: '
-        if 'malicious' in entry[entry.index(':'):]:
-            scan_str += ':interrobang: '
-        if 'malware' in entry[entry.index(':'):]:
-            scan_str += ':fire: '
-        scan_str += entry + '\n'
+                + '\nMalware: ' + str(len(scan_list_malware)) + '(' + str(round((len(scan_list_malware)/len(scan_list))*100)) +'%)')
+    
+    if verbose: 
+        scan_str += '\n' + ('-'*20) + '\n'
+        for entry in scan_list:
+            if 'clean' in entry[entry.index(':'):]:
+                scan_str += ':white_check_mark: '
+            if 'unrated' in entry[entry.index(':'):]:
+                scan_str += ':grey_question: '
+            if 'malicious' in entry[entry.index(':'):]:
+                scan_str += ':interrobang: '
+            if 'malware' in entry[entry.index(':'):]:
+                scan_str += ':fire: '
+            scan_str += entry + '\n'
     return scan_str
+
+

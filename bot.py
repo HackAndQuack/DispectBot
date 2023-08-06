@@ -38,10 +38,22 @@ async def get_email(ctx, email:str):
 #async def report_email(ctx,email=''):
 #   report_email(email)
 
+@tree.command(name='urlscan', description='Scans a URL manually')
+async def urlscan(ctx, url:str, verbose:bool):
+    try:
+        scan_parsed = scan_for_json(url)
+        scan_str = parse_and_sort(scan_parsed, verbose)
+        embed = discord.Embed(title=url, description=scan_str, color=0x0000FF)
+        embed.set_footer(text='Results come from VirusTotal.com', icon_url='https://cdn.icon-icons.com/icons2/2699/PNG/512/virustotal_logo_icon_171247.png')
+        await ctx.response.send_message(embed=embed)
+    except:
+        await ctx.response.send_message('Error occured, try again (is the URL valid?)')
+
 
 @client.event
 async def on_ready():
     await tree.sync()
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='for malware'))
 
     global guild
     guild = client.get_guild(args.guild)
@@ -67,9 +79,10 @@ async def on_message(message):
                 # VirusTotal scan the URL, save results to scan_result
                 scan_parsed = scan_for_json(word)
                 # Parse through the dictionary
-                scan_str = parse_and_sort(scan_parsed)
+                scan_str = parse_and_sort(scan_parsed, True)
                 # Send embed message
-                embed = discord.Embed(title=word, description=scan_str, color=0xFFFFFF)
+                embed = discord.Embed(title=word, description=scan_str, color=0x0000FF)
+                embed.set_footer(text='Results come from VirusTotal.com', icon_url='https://cdn.icon-icons.com/icons2/2699/PNG/512/virustotal_logo_icon_171247.png')
                 await log_channel.send(embed=embed)
 
                 if get_clean_percentage(scan_parsed) < 66:
