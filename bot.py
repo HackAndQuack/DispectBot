@@ -96,22 +96,29 @@ async def on_message(message):
                     scan_list.append(entry)
 
                 # Format scan_list to string
-                scan_str = ('Clean: ' + str(len(scan_list_clean)) + '(' + str((len(scan_list_clean)/len(scan_list))*100) +'%)'
-                            + '\nUnrated: ' + str(len(scan_list_unrated)) + '(' + str((len(scan_list_unrated)/len(scan_list))*100) +'%)'
-                            + '\nMalicious: ' + str(len(scan_list_malicious)) + '(' + str((len(scan_list_malicious)/len(scan_list))*100) +'%)'
-                            + '\nMalware: ' + str(len(scan_list_malware)) + '(' + str((len(scan_list_malware)/len(scan_list))*100) +'%)'
+                scan_str = ('Clean: ' + str(len(scan_list_clean)) + '(' + str(round((len(scan_list_clean)/len(scan_list))*100)) +'%)'
+                            + '\nUnrated: ' + str(len(scan_list_unrated)) + '(' + str(round((len(scan_list_unrated)/len(scan_list))*100)) +'%)'
+                            + '\nMalicious: ' + str(len(scan_list_malicious)) + '(' + str(round((len(scan_list_malicious)/len(scan_list))*100)) +'%)'
+                            + '\nMalware: ' + str(len(scan_list_malware)) + '(' + str(round((len(scan_list_malware)/len(scan_list))*100)) +'%)'
                             + '\n' + ('-'*20) + '\n')
                 
                 for entry in scan_list:
-                    if 'clean' in entry:
+                    if 'clean' in entry[entry.index(':'):]:
                         scan_str += ':white_check_mark: '
-                    if 'unrated' in entry:
+                    if 'unrated' in entry[entry.index(':'):]:
                         scan_str += ':grey_question: '
+                    if 'malicious' in entry[entry.index(':'):]:
+                        scan_str += ':interrobang: '
+                    if 'malware' in entry[entry.index(':'):]:
+                        scan_str += ':fire: '
                     scan_str += entry + '\n'
 
                 # Send embed message
                 embed = discord.Embed(title=word, description=scan_str, color=0xFFFFFF)
                 await log_channel.send(embed=embed)
+
+                if ((len(scan_list_clean)/len(scan_list))*100) < 66:
+                    await message.delete()
 
 
 client.run(os.getenv('DISCORD_BOT_TOKEN'))
