@@ -6,6 +6,10 @@ import os
 import argparse
 from vtclient import *
 from emailrepclient import *
+from shodanclient import *
+from shodan import Shodan
+
+
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
@@ -33,6 +37,15 @@ async def get_email(ctx, email:str):
     email_response = scan_email(email)
     embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
 
+
+@tree.command(name='host_scan', description='Returns all services that have been found on the given host IP')
+async def host_scan(ctx, ip:str):
+    if(check(ip) == "Valid IP address"):
+        ip_response = scan_host(ip)
+        embed = discord.Embed(title='Host Scan', description=ip_response, color=0x00ff00)
+        await discord.send(embed=embed)
+
+    
 # Slash command /report_email
 #@tree.command(name='email_report', description='Report Email')
 #async def report_email(ctx,email=''):

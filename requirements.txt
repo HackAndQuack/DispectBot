@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 pyfiglet==0.8.post1
 nest-asyncio==1.5.7
 emailrep==0.0.5
+ipaddress==1.0.23
