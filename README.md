@@ -7,7 +7,7 @@ When a user sends a message into a Discord channel, this bot will look through t
 If a URL exists in the sent message, the bot will scan it with [VirusTotal](https://www.virustotal.com/), delete the original message if malicious, and send a message to a logging channel. 
 
 # Usage
-1. (Optional) create python virtual environment
+1. (Optional) Create python virtual environment
 ```bash
 python -m venv .venv
 source .venv/bin/activate
