@@ -120,7 +120,7 @@ async def on_message(message):
                 scan_str = parse_and_sort(scan_parsed, True)
                 # Send embed message
                 embed = discord.Embed(title=word, description=scan_str, color=0x0000FF)
-                embed.set_footer(text='Results come from VirusTotal.com', icon_url='https://cdn.icon-icons.com/icons2/2699/PNG/512/virustotal_logo_icon_171247.png')
+                embed.set_footer(text='Results come from VirusTotal.com\nURL sent by ' + message.author.name + ' (' + message.author.mention + ')', icon_url='https://cdn.icon-icons.com/icons2/2699/PNG/512/virustotal_logo_icon_171247.png')
                 await log_channel.send(embed=embed)
 
                 if get_clean_percentage(scan_parsed) < 66:
