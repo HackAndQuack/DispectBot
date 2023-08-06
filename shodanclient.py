@@ -44,4 +44,23 @@ def parse_and_sort_scan_host(data_host:dict) -> str:
                   )
 
     return ip_reponse
+
+#Scans API info and gives stats
+def get_api_info() -> str:
+    api_data = shodan_client.info()
+    api_parse = parse_and_sort_api_info(api_data)
+    return api_parse
+
+def parse_and_sort_api_info(api_data:dict) -> str:
+    api_response = ('Info: \n ---------'
+                    +'\nScan Credits: ' + (str(api_data['scan_credits']),)
+                    + '\nPlan: ' (str(api_data['plan']),)
+                    + '\nHTTPs: ' (str(api_data['https']),)
+                    + '\nUnlocked: ' (str(api_data['unlocked']),)
+                    + '\nQuery Credits: ' (str(api_data['query_credits']),)
+                    + '\nMonitored IPs: ' (str(api_data['monitored_ips']),)
+                    + '\nUnlocked Left: ' (str(api_data['unlocked_left']),)
+                    + '\nTelnet: ' (str(api_data['telnet']))
+                    )
+    return api_response
     

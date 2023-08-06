@@ -37,6 +37,14 @@ async def get_email(ctx, email:str):
     email_response = scan_email(email)
     embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
 
+# Slash command /api_info 
+@tree.command(name='api_info', description='Returns information about the API plan belonging to the given API key')
+async def api_info(ctx):
+    print("Getting API Info")
+    api_reponse = get_api_info()
+    embed = discord.Embed(title=('API Info'), description=api_reponse, color=0x2fd76b)
+    await log_channel.send(embed=embed)
+
 # Slash command /host_scan <ip_address>
 @tree.command(name='host_scan', description='Returns all services that have been found on the given host IP')
 async def host_scan(ctx, ip:str):
@@ -52,7 +60,7 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await log_channel.send(embed=embed)
 
-    
+
 # Slash command /report_email
 #@tree.command(name='email_report', description='Report Email')
 #async def report_email(ctx,email=''):
