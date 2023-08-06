@@ -57,8 +57,7 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await ctx.response.send_message(embed=embed)
 
-#Slash command /reverse_dns [ip_address's]
-
+# Slash command /reverse_dns [ip_address's]
 @tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
 async def reverse_dns(ctx,ips:str):
     dns_response = reverse_dns_info(ips)
@@ -82,6 +81,11 @@ async def urlscan(ctx, url:str, verbose:bool):
     except:
         await ctx.response.send_message('Error occured, try again (is the URL valid?)')
 
+@tree.command(name='threat_categories', description='Get a list of popular threat categories')
+async def threat_categories(ctx):
+    threat_categories_parsed = get_threat_categories()
+    embed = discord.Embed(title='Threat Categories', description=threat_categories_parsed, color=0x800080)
+    await ctx.response.send_message(embed=embed)
 
 @client.event
 async def on_ready():

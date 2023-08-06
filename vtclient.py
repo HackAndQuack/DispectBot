@@ -3,6 +3,7 @@ import os
 import json
 from dotenv import load_dotenv
 import nest_asyncio
+import requests
 
 load_dotenv()
 nest_asyncio.apply()
@@ -108,4 +109,22 @@ def parse_and_sort(scan_parsed:dict, verbose:bool) -> str:
             scan_str += entry + '\n'
     return scan_str
 
+#Gets a list of popular threat categories
+def get_threat_categories() -> str:
+    url = "https://www.virustotal.com/api/v3/popular_threat_categories"
 
+    headers = {
+        "accept": "application/json",
+        "X-Apikey": (os.getenv('VIRUS_TOTAL_API'))
+    }
+
+    response = requests.get(url, headers=headers)
+    response_data = response.json()
+    parse_data = parse_and_sort_threat_categories(response_data)
+    return parse_data
+#Formats json file
+def parse_and_sort_threat_categories(response_data:json) -> str: 
+    parse_data = 'Threats: \n--------'
+    for x in response_data['data']:
+        parse_data += ('\n' + str(x))
+    return parse_data
