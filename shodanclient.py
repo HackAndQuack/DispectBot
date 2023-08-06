@@ -1,13 +1,47 @@
 from dotenv import load_dotenv , find_dotenv
 import os
 from shodan import Shodan
+import ipaddress
 
 shodan_client = Shodan(os.getenv('SHODAN_API'))
 
-def scan_host(ip:str) -> str:
-    data = shodan_client.host(str)
+#Checks if IP-Address is Valid
+def check(ip) -> bool:
+    # Use the ip_address function from the ipaddress module to check if the input is a valid IP address
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except ValueError:
+    # If the input is not a valid IP address, catch the exception and print an error message
+        return False
 
-    ip_reponse = ('Country Code: ' + data['country_code']
-                + '\nCountry Name: ' + data['country_name']
-                + '\nCity: ' + data['city']
-                + )
+#Scans Host and returns it cleaned and formatted
+def scan_host(ip:str) -> str:
+    data_host = shodan_client.host(ip)
+    host_str = parse_and_sort_scan_host(data_host)
+    return host_str
+
+#formats the response file from the host scan
+def parse_and_sort_scan_host(data_host:dict) -> str:
+    ip_reponse = ('Location: \n ---------' 
+                  + '\nArea Code: ' + (str(data_host['area_code']))
+                  + '\nCity: ' + (str(data_host['city']))
+                  + '\nCountry Code: ' + (str(data_host['country_code']))
+                  + '\nCountry Name: ' + (str(data_host['country_name']))
+                  + '\nLatitude: ' + (str(data_host['latitude']))
+                  + '\nLongitude: ' + (str(data_host['longitude']))
+                  + '\nRegion Code: ' + (str(data_host['region_code']))
+                  + '\n\nData: \n ---------'
+                  + '\nDomains: ' + (str(data_host['domains']))
+                  + '\nHost Names: ' + (str(data_host['hostnames']))
+                  + '\nIP: ' + (str(data_host['ip']))
+                  + '\nIP String: ' + (str(data_host['ip_str']))
+                  + '\nISP: ' + (str(data_host['isp']))
+                  + '\nORG: ' + (str(data_host['org']))
+                  + '\nOS: ' + (str(data_host['os']))
+                  + '\nPorts: ' + (str(data_host['ports']))
+                  + '\nTags: ' + (str(data_host['tags']))
+                  )
+
+    return ip_reponse
+    

@@ -37,13 +37,20 @@ async def get_email(ctx, email:str):
     email_response = scan_email(email)
     embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
 
-
+# Slash command /host_scan <ip_address>
 @tree.command(name='host_scan', description='Returns all services that have been found on the given host IP')
 async def host_scan(ctx, ip:str):
-    if(check(ip) == "Valid IP address"):
+    if(check(ip) == True):
+        print('Getting Response')
         ip_response = scan_host(ip)
-        embed = discord.Embed(title='Host Scan', description=ip_response, color=0x00ff00)
-        await discord.send(embed=embed)
+        print('Embedding')
+        embed = discord.Embed(title=('Host Scan for ' + str(ip)), description=ip_response, color=0x00ff00)
+        await log_channel.send(embed=embed)
+    #Reports to user when IP address is wrong
+    else: 
+        print("Not Valid IP")
+        embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
+        await log_channel.send(embed=embed)
 
     
 # Slash command /report_email
