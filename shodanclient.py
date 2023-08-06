@@ -9,12 +9,12 @@ shodan_client = Shodan(os.getenv('SHODAN_API'))
 
 #Checks if IP-Address is Valid
 def check(ip) -> bool:
-    # Use the ip_address function from the ipaddress module to check if the input is a valid IP address
+    #Use the ip_address function from the ipaddress module to check if the input is a valid IP address
     try:
         ipaddress.ip_address(ip)
         return True
     except ValueError:
-    # If the input is not a valid IP address, catch the exception and print an error message
+    #If the input is not a valid IP address, catch the exception and print an error message
         return False
 
 #Scans Host and returns it cleaned and formatted
@@ -53,7 +53,7 @@ def get_api_info() -> str:
     api_parse = parse_and_sort_api_info(api_data)
     return api_parse
 
-#formats the response file from the api_info scan
+#Formats the response file from the api_info scan
 def parse_and_sort_api_info(api_data:dict) -> str:
     api_response = ('Info: \n ---------'
                     + '\nScan Credits: ' + (str(api_data['scan_credits']))
@@ -68,7 +68,21 @@ def parse_and_sort_api_info(api_data:dict) -> str:
     return api_response
     
 #Scans Reverse DNS info
-def reverse_dns_info(ip_list:list()) -> str:
-    ip = ''
-    for x in ip_list:
-        ip += (x + ',')
+def reverse_dns_info(ip_list:str) -> str:
+    ip_parameters = {
+        'ips': ip_list,
+        'key': (str(os.getenv('SHODAN_API')))
+    }
+
+    url = "https://api.shodan.io/dns/reverse?"
+    response = requests.get(url,params=ip_parameters)
+    response_data = response.json()
+    response = parse_and_sort_reverse_dns(response_data)
+    return response
+
+#Formats the response file from the reverse_dns_info scan
+def parse_and_sort_reverse_dns(data:json) -> str:
+    response_parse = 'Reverse DNS Lookup: \n----------------'
+    for x in data:
+        response_parse += ('\n' + str(x) + ': ' + str(data[x]))
+    return response_parse

@@ -57,24 +57,19 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await ctx.response.send_message(embed=embed)
 
-# Slash command /reverse_dns [ip_address's]
-"""
-@tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
-async def reverse_dns(ctx,ip:list()):
-    for x in ip:
-        if(check(x) == True):
-            print("Valid IP")
-        else:
-            embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
-            await log_channel.send(embed=embed)
-            break
-    reverse_dns_info(ip)
-"""
+#Slash command /reverse_dns [ip_address's]
 
-# Slash command /report_email
+@tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
+async def reverse_dns(ctx,ips:str):
+    dns_response = reverse_dns_info(ips)
+    embed = discord.Embed(title=('DNS Scans for ' + str(ips)), description=dns_response, color=0xFFC0CB)
+    await ctx.response.send_message(embed=embed)
+
+
+#Slash command /report_email
 #@tree.command(name='email_report', description='Report Email')
 #async def report_email(ctx,email=''):
-#   report_email(email)
+#report_email(email)
 
 @tree.command(name='urlscan', description='Scans a URL manually')
 async def urlscan(ctx, url:str, verbose:bool):
