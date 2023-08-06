@@ -20,3 +20,6 @@ pip install -r requirements.txt
 ```bash
 python bot.py --channel <log_channel_id> --guild <discord_guild_id>
 ```
+
+## NOTE:
+The guild argument only exists so the bot can find the text channel to send logs to. The bot will still scan messages in all servers that its in, and send all logs from all servers to the specified channel. 
