@@ -87,6 +87,7 @@ def parse_and_sort_reverse_dns(data:json) -> str:
         response_parse += ('\n' + str(x) + ': ' + str(data[x]))
     return response_parse
 
+#Scans DNS Lookup info
 def dns_lookup_info(ip_list:str) -> str:
     ip_parameters = {
         'hostnames': ip_list,
@@ -97,7 +98,7 @@ def dns_lookup_info(ip_list:str) -> str:
     response_data = response.json()
     response = parse_and_sort_dns_lookup(response_data)
     return response
-
+#Formats the response file from the dns_lookup_info scan
 def parse_and_sort_dns_lookup(data:json) -> str:
     response_parse = 'DNS Lookup: \n----------------'
     for x in data:

@@ -55,6 +55,7 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await ctx.response.send_message(embed=embed)
 
+# Slash command /dns_lookup [host_name's]
 @tree.command(name='dns_lookup', description='Look up the IP address for the provided list of hostnames.')
 async def dns_lookup(ctx, ips:str):
     dns_lookup_response = dns_lookup_info(ips)
