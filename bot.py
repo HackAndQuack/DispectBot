@@ -34,6 +34,7 @@ async def getnews(interaction):
 async def get_email(ctx, email:str):
     email_response = scan_email(email)
     embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
+    await ctx.response.send_message(embed=embed)
 
 # Slash command /api_info 
 @tree.command(name='api_info', description='Returns information about the API plan belonging to the given API key')
@@ -55,19 +56,25 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await ctx.response.send_message(embed=embed)
 
+# Slash command /domain_infomation <domain_name>]
+@tree.command(name='domain_information',description='Get all the subdomains and other DNS entries for the given domain. Uses 1 query credit per lookup')
+async def domain_information(ctx, domain:str):
+    domain_information_response = domain_information(domain)
+    embed = discord.Embed(title=('Domain Information for ' + str(domain)), description=domain_information_response, color=0x80FF00)
+    await ctx.response.send_message(embed=embed)  
+
 # Slash command /dns_lookup [host_name's]
 @tree.command(name='dns_lookup', description='Look up the IP address for the provided list of hostnames.')
-async def dns_lookup(ctx, ips:str):
-    dns_lookup_response = dns_lookup_info(ips)
-    embed = discord.Embed(title=('DNS Lookup for ' + str(ips)), description=dns_lookup_response, color=0xFFC0CB)
+async def dns_lookup(ctx, host_names:str):
+    dns_lookup_response = dns_lookup_info(host_names)
+    embed = discord.Embed(title=('DNS Lookup for ' + str(host_names)), description=dns_lookup_response, color=0xFFC0CB)
     await ctx.response.send_message(embed=embed)  
     
-
 # Slash command /reverse_dns [ip_address's]
 @tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
-async def reverse_dns(ctx,host_names:str):
-    dns_response = reverse_dns_info(host_names)
-    embed = discord.Embed(title=('DNS Scans for ' + str(host_names)), description=dns_response, color=0xFFC0CB)
+async def reverse_dns(ctx,ips:str):
+    dns_response = reverse_dns_info(ips)
+    embed = discord.Embed(title=('DNS Scans for ' + str(ips)), description=dns_response, color=0xFFC0CB)
     await ctx.response.send_message(embed=embed)
 
 

@@ -104,3 +104,22 @@ def parse_and_sort_dns_lookup(data:json) -> str:
     for x in data:
         response_parse += ('\n' + str(x) + ': ' + str(data[x]))
     return response_parse
+
+def domain_information(domain:str) -> str:
+    domain_parameters = {
+        'history' : False,
+        'key': (str(os.getenv('SHODAN_API')))
+    }
+    url = ("https://api.shodan.io/dns/domain/" + str(domain))
+    response = requests.get(url,params=domain_parameters)
+    response_data = response.json()
+    response = parse_and_sort_domain_information(response_data)
+    return response
+
+def parse_and_sort_domain_information(data:json) -> str:
+
+    response_parse = ('Domain Info: \n--------------'
+                      + '\nDomain: ' + str(data['domain'])
+                      + '\nTags: ' + str(data['tags']))
+    return response_parse
+#Need to go over what information we need to send out due to large amount of data given

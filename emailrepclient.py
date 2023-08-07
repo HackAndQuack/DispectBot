@@ -11,7 +11,7 @@ emailrep = EmailRep((os.getenv('EMAIL_REP_API')))
 def scan_email(email:str) -> str:
     data = emailrep.query(email)
 
-    email_response = ('Email ' + data['email']
+    email_response = ('Email ' + str(data['email'])
              + '\nReputation: ' + str(data['reputation'])
              + '\nSuspicious: ' + str(data['suspicious'])
              + '\nReferences: ' + str(data['references'])
