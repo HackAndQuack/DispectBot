@@ -57,6 +57,13 @@ async def host_scan(ctx, ip:str):
         embed = discord.Embed(title=('Not a Valid IP: ' + str(ip) + "!"), description="Please enter a valid IP address https://en.wikipedia.org/wiki/IP_address", color=0xff0000)
         await ctx.response.send_message(embed=embed)
 
+@tree.command(name='dns_lookup', description='Look up the IP address for the provided list of hostnames.')
+async def dns_lookup(ctx, ips:str):
+    dns_lookup_response = dns_lookup_info(ips)
+    embed = discord.Embed(title=('DNS Lookup for ' + str(ips)), description=dns_lookup_response, color=0xFFC0CB)
+    await ctx.response.send_message(embed=embed)  
+    
+
 # Slash command /reverse_dns [ip_address's]
 @tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
 async def reverse_dns(ctx,ips:str):
