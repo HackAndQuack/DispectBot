@@ -7,8 +7,6 @@ import argparse
 from vtclient import *
 from emailrepclient import *
 from shodanclient import *
-from shodan import Shodan
-
 
 
 # Set up argument parser
