@@ -65,9 +65,9 @@ async def dns_lookup(ctx, ips:str):
 
 # Slash command /reverse_dns [ip_address's]
 @tree.command(name='reverse_dns', description='Look up the hostnames that have been defined for the given list of IP addresses.')
-async def reverse_dns(ctx,ips:str):
-    dns_response = reverse_dns_info(ips)
-    embed = discord.Embed(title=('DNS Scans for ' + str(ips)), description=dns_response, color=0xFFC0CB)
+async def reverse_dns(ctx,host_names:str):
+    dns_response = reverse_dns_info(host_names)
+    embed = discord.Embed(title=('DNS Scans for ' + str(host_names)), description=dns_response, color=0xFFC0CB)
     await ctx.response.send_message(embed=embed)
 
 
