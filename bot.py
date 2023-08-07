@@ -36,6 +36,22 @@ async def get_email(ctx, email:str):
     embed = discord.Embed(title='Email Response', description=email_response, color=0x00FFF)
     await ctx.response.send_message(embed=embed)
 
+# Slash command /report_email <email> [tags] <reason>
+@tree.command(name='report_email', description='Reports an email address')
+async def report_email(ctx, email:str, tags:str, reason:str):
+    tags = tags.split()
+    report_response = report_email(email,tags,reason)
+    embed = discord.Embed(title='Report Email', description=report_response, color=0xffc87c)
+    await ctx.response.send_message(embed=embed)
+
+# Slash command /get_report_tags to view what tags a user can add
+@tree.command(name='get_report_tags', description='Get tags to report an email address')
+async def get_report_tags(ctx):
+    tag_response = show_tags()
+    embed = discord.Embed(title='Report Tags', description=tag_response, color=0xff2400)
+    await ctx.response.send_message(embed=embed)
+
+
 # Slash command /api_info 
 @tree.command(name='api_info', description='Returns information about the API plan belonging to the given API key')
 async def api_info(ctx):
@@ -78,11 +94,7 @@ async def reverse_dns(ctx,ips:str):
     await ctx.response.send_message(embed=embed)
 
 
-#Slash command /report_email
-#@tree.command(name='email_report', description='Report Email')
-#async def report_email(ctx,email=''):
-#report_email(email)
-
+# Slash command /urlscan <url> <True/False>
 @tree.command(name='urlscan', description='Scans a URL manually')
 async def urlscan(ctx, url:str, verbose:bool):
     try:
@@ -94,12 +106,14 @@ async def urlscan(ctx, url:str, verbose:bool):
     except:
         await ctx.response.send_message('Error occured, try again (is the URL valid?)')
 
+# Slash command /threat_categories
 @tree.command(name='threat_categories', description='Get a list of popular threat categories')
 async def threat_categories(ctx):
     threat_categories_parsed = get_threat_categories()
     embed = discord.Embed(title='Threat Categories', description=threat_categories_parsed, color=0x800080)
     await ctx.response.send_message(embed=embed)
 
+# Sets activity
 @client.event
 async def on_ready():
     await tree.sync()
@@ -119,7 +133,7 @@ async def on_message(message):
     #Bot ignore itself
     if message.author == client.user:
         return
-    
+    #Detects if user sends a URL
     if 'http' in message.content.lower():
         scan_result = ''
         message_parsed = message.content.split(' ')

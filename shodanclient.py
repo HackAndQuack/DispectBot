@@ -5,6 +5,7 @@ import ipaddress
 import requests
 import json
 
+#Imports API
 shodan_client = Shodan(os.getenv('SHODAN_API'))
 
 #Checks if IP-Address is Valid
@@ -105,6 +106,7 @@ def parse_and_sort_dns_lookup(data:json) -> str:
         response_parse += ('\n' + str(x) + ': ' + str(data[x]))
     return response_parse
 
+#Scans Domain Information
 def domain_information(domain:str) -> str:
     domain_parameters = {
         'history' : False,
@@ -116,6 +118,7 @@ def domain_information(domain:str) -> str:
     response = parse_and_sort_domain_information(response_data)
     return response
 
+#Formats the response file from the domain_information scan
 def parse_and_sort_domain_information(data:json) -> str:
 
     response_parse = ('Domain Info: \n--------------'
