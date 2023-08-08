@@ -34,12 +34,18 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Lowercase repository name
+        id: string
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
       - name: Build and save local Docker image
         id: build-and-save
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: .
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.string.outputs.lowercase }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -51,7 +57,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.string.outputs.lowercase }}:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
