@@ -19,6 +19,37 @@ If a URL exists in the sent message, the bot will scan it with [VirusTotal](http
 # Non-Automatic
 For non-automatic features, slash commands are being utilized through Discord. 
 
+# Running on Docker (recommended)'
+1. Pull the Docker image
+```bash
+docker pull ghcr.io/hackandquack/dispectbot:latest
+```
+
+2. Run the docker image
+```bash
+docker run --it dispectbot --log-channel <log_channel_id>\
+    --guild <discord_guild_id>\
+    --discord-token <discord_bot_token>\
+    --shodan-token <shodan_token>\
+    --emailrep-token <emailrep_token>\
+    --virustotal-token <virustotal_token>
+```
+
+# Manually building and running Docker container 
+1. After cloning this repository, build the container
+```bash
+docker build -t dispectbot .
+```
+2. Run the container
+```bash
+docker run --it dispectbot --log-channel <log_channel_id>\
+    --guild <discord_guild_id>\
+    --discord-token <discord_bot_token>\
+    --shodan-token <shodan_token>\
+    --emailrep-token <emailrep_token>\
+    --virustotal-token <virustotal_token>
+```
+
 # Running on bare metal
 1. (Optional) Create python virtual environment
 ```bash
@@ -29,19 +60,14 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-3. Run bot.py
+3. Run dispect.py
 ```bash
-python bot.py --channel <log_channel_id> --guild <discord_guild_id> 
-```
-
-# Running in Docker (recommended)
-1. Build the container
-```bash
-docker build -t dispect .
-```
-2. Run the container
-```bash
-docker run --it dispect --channel <log_channel_id> --guild <discord_channel_id>
+python dispect.py --log-channel <log_channel_id>\
+    --guild <discord_guild_id>\
+    --discord-token <discord_bot_token>\
+    --shodan-token <shodan_token>\
+    --emailrep-token <emailrep_token>\
+    --virustotal-token <virustotal_token>
 ```
 
 ### NOTE:

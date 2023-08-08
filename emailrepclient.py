@@ -1,11 +1,11 @@
 import emailrep
 from emailrep import EmailRep
-from dotenv import load_dotenv
-import os
 
-load_dotenv()
 #Imports API
-emailrep = EmailRep((os.getenv('EMAIL_REP_API')))
+
+def set_emailrep_token(token:str):
+    global emailrep
+    emailrep = EmailRep(token)
 
 #Scans email and return response
 def scan_email(email:str) -> str:

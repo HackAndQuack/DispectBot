@@ -1,12 +1,14 @@
-from dotenv import load_dotenv , find_dotenv
-import os
 from shodan import Shodan
 import ipaddress
 import requests
 import json
 
 #Imports API
-shodan_client = Shodan(os.getenv('SHODAN_API'))
+def set_shodan_token(token:str):
+    global shodan_token
+    shodan_token = token
+    global shodan_client
+    shodan_client = Shodan(token)
 
 #Checks if IP-Address is Valid
 def check(ip) -> bool:
@@ -72,7 +74,7 @@ def parse_and_sort_api_info(api_data:dict) -> str:
 def reverse_dns_info(ip_list:str) -> str:
     ip_parameters = {
         'ips': ip_list,
-        'key': (str(os.getenv('SHODAN_API')))
+        'key': (shodan_token)
     }
 
     url = "https://api.shodan.io/dns/reverse?"
@@ -92,7 +94,7 @@ def parse_and_sort_reverse_dns(data:json) -> str:
 def dns_lookup_info(hostname_list:str) -> str:
     hostname_parameters = {
         'hostnames': hostname_list,
-        'key': (str(os.getenv('SHODAN_API')))
+        'key': (shodan_token)
     }
     url = "https://api.shodan.io/dns/resolve?"
     response = requests.get(url,params=hostname_parameters)
@@ -110,7 +112,7 @@ def parse_and_sort_dns_lookup(data:json) -> str:
 def domain_information(domain:str) -> str:
     domain_parameters = {
         'history' : False,
-        'key': (str(os.getenv('SHODAN_API')))
+        'key': (shodan_token)
     }
     url = ("https://api.shodan.io/dns/domain/" + str(domain))
     response = requests.get(url,params=domain_parameters)

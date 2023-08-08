@@ -1,13 +1,15 @@
 import vt 
-import os
 import json
-from dotenv import load_dotenv
 import nest_asyncio
 import requests
 
-load_dotenv()
 nest_asyncio.apply()
-vt_client = vt.Client(os.getenv('VIRUS_TOTAL_API'))
+
+def set_vt_token(token:str):
+    global vt_token
+    vt_token = token
+    global vt_client
+    vt_client = vt.Client(token)
 
 
 def scan_for_json(url:str) -> dict:
@@ -115,7 +117,7 @@ def get_threat_categories() -> str:
 
     headers = {
         "accept": "application/json",
-        "X-Apikey": (os.getenv('VIRUS_TOTAL_API'))
+        "X-Apikey": (vt_token)
     }
 
     response = requests.get(url, headers=headers)

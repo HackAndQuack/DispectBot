@@ -1,8 +1,6 @@
 import discord 
 from discord import app_commands
-from dotenv import load_dotenv
 import pyfiglet
-import os
 import argparse
 from vtclient import *
 from emailrepclient import *
@@ -11,17 +9,25 @@ from shodanclient import *
 
 # Set up argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument('--channel', type=int, help='Channel ID for the bot to send analytics to', required=True)
-parser.add_argument('--guild', type=int, help='Guild ID of the bot to use', required=True)
+parser.add_argument('-lc', '--log-channel', type=int, help='Channel ID for the bot to send analytics to', required=True)
+parser.add_argument('-g', '--guild', type=int, help='Guild ID of the bot to use', required=True)
+parser.add_argument('-dt', '--discord-token', type=str, help='Discord bot token', required=True)
+parser.add_argument('-st', '--shodan-token', type=str, help='Shodan API token', required=True)
+parser.add_argument('-et', '--emailrep-token', type=str, help='Emailrep API token', required=True)
+parser.add_argument('-vt', '--virustotal-token', type=str, help='VirusTotal API token', required=True)
+
 args = parser.parse_args()
 
-load_dotenv()
+# Initialize other APIs
+set_shodan_token(args.shodan_token)
+set_emailrep_token(args.emailrep_token)
+set_vt_token(args.virustotal_token)
 
+# Initialize Discord bot
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-
 
 # Slash command /getnews
 @tree.command(name='getnews', description='gets the news')
@@ -123,7 +129,7 @@ async def on_ready():
     guild = client.get_guild(args.guild)
     
     global log_channel
-    log_channel = guild.get_channel(args.channel)
+    log_channel = guild.get_channel(args.log_channel)
 
     print(pyfiglet.figlet_format('Dispect'))
 
@@ -153,4 +159,4 @@ async def on_message(message):
                     await message.delete()
 
 
-client.run(os.getenv('DISCORD_BOT_TOKEN'))
+client.run(args.discord_token)
