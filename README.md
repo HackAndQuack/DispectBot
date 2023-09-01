@@ -19,7 +19,7 @@ If a URL exists in the sent message, the bot will scan it with [VirusTotal](http
 # Non-Automatic
 For non-automatic features, slash commands are being utilized through Discord. 
 
-# Running on Docker (recommended)'
+# Running on Docker (recommended)
 1. Pull the Docker image
 ```bash
 docker pull ghcr.io/hackandquack/dispectbot:latest
